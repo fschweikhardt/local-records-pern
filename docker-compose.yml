@@ -1,0 +1,12 @@
+services:
+  client:
+    container_name: local_records
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run dev
