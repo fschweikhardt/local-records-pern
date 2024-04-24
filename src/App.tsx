@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 
 interface Record {
+  id: number;
   release: {
     artist: string;
     title: string;
@@ -23,7 +24,7 @@ function App() {
     useEffect(()=> {
         const getRandomPage = Math.floor(Math.random() * 39)
         const pageination = `page=${getRandomPage}&per_page=100`
-        const token = `token=${import.meta.env.VITE_API_KEY}`
+        const token = `token=${import.meta.env.VITE_DISCOGS_API_KEY}`
         const url = `https://api.discogs.com/users/landlockedmusic/inventory?${pageination}&${token}`
         const options = {
           method: 'GET',
@@ -50,11 +51,46 @@ function App() {
                 setLoaded(true)
             })
     }, [])
+
+    const handleDisplayFavorites = async () => {
+        console.log('display favorites')
+        const options = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }
+        try {
+            const response = await fetch('http://localhost:8000/api/displayFavorites', options)
+            const data = await response.json()
+            console.log(data)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const handleAddToFavorites = async () => {
+        const options = {
+            method: 'POST',
+            body: JSON.stringify({
+                item_id: records[counter].id
+            }),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }
+        try {
+            const response = await fetch('http://localhost:8000/api/addToFavorites', options)
+            console.log(response)
+        } catch (error) {
+            console.error(error)
+        }
+    }
     
     if (!loaded) { 
       return <></>
   } else {
-      return (
+        return (
           <>
               {!menuDisplay && 
                   <div>
@@ -102,14 +138,21 @@ function App() {
                                           prev
                                       </button>
                                       <button 
+                                          onClick={()=>{ handleAddToFavorites() }}
                                           className='px-2.5'
                                       >
-                                          add to cart
+                                          add to favorite
                                       </button>
                                       <button 
                                           onClick={counter === records.length-1 ? ()=>window.location.reload() : ()=>setCounter(counter+1)}
                                       >
                                           next
+                                      </button>
+                                        <button 
+                                          onClick={()=>{ handleDisplayFavorites() }}
+                                          className='px-2.5'
+                                      >
+                                          display favorites
                                       </button>
                                   </div>
                           </div>
@@ -129,7 +172,7 @@ function App() {
                           onClick={()=>window.location.reload()}
                       >
                           shuffle
-                      </button>
+                      </button>   
                   }
               </div>
           </>

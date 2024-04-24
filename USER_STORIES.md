@@ -18,3 +18,9 @@
     // deploy to vercel
     // update app to react 18 requirements
     // connect oAuth
+
+
+    TODOs
+    - remove App.css
+    - format code
+    - display images from favorites
