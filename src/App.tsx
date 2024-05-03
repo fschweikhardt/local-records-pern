@@ -29,7 +29,7 @@ function App() {
         const options = {
           method: 'GET',
           headers: {
-              'User-Agent': 'LocalRecordStoreApp/1.0 localhost:3000'
+              'User-Agent': 'LocalRecordStoreApp/1.0 localhost'
           }
       };
         let resFiltered = []
@@ -86,10 +86,28 @@ function App() {
             console.error(error)
         }
     }
+
+    const handleAuthorize = async () => {
+        console.log('authorize')
+        const options = {
+            method: 'GET',
+            headers: {
+                'Allow-Control-Allow-Origin': '*',
+            }
+        }
+        try {
+            const response = await fetch('http://localhost:8000/api/authorize', options)
+            console.log(response)
+            window.location.href = response.url
+        } catch (error) {
+            console.error(error)
+        }
+    }
     
     if (!loaded) { 
       return <></>
   } else {
+        console.log(records[counter])
         return (
           <>
               {!menuDisplay && 
@@ -153,6 +171,12 @@ function App() {
                                           className='px-2.5'
                                       >
                                           display favorites
+                                      </button>
+                                      <button 
+                                          onClick={()=>{ handleAuthorize() }}
+                                          className='px-2.5'
+                                      >
+                                          authorize
                                       </button>
                                   </div>
                           </div>
